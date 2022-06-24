@@ -3,6 +3,9 @@ package com.abdl.mywhatsappclone
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.viewpager2.adapter.FragmentStateAdapter
+import com.abdl.mywhatsappclone.ui.CallsFragment
+import com.abdl.mywhatsappclone.ui.ChatFragment
+import com.abdl.mywhatsappclone.ui.StatusFragment
 
 class SectionsPagerAdapter(activity: AppCompatActivity): FragmentStateAdapter(activity) {
     override fun getItemCount(): Int {
