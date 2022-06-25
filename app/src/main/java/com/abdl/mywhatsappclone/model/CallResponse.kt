@@ -1,5 +1,7 @@
 package com.abdl.mywhatsappclone.model
 
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 import com.google.gson.annotations.SerializedName
 
 data class CallResponse(
@@ -8,8 +10,10 @@ data class CallResponse(
     val calls: List<CallsItem>
 )
 
+@Entity(tableName = "tbl_call")
 data class CallsItem(
 
+    @PrimaryKey
     @field:SerializedName("nama_kontak")
     val namaKontak: String,
 

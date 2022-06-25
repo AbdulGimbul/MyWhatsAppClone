@@ -5,19 +5,20 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
+import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.abdl.mywhatsappclone.adapter.ListStatusAdapter
 import com.abdl.mywhatsappclone.databinding.FragmentStatusBinding
 import com.abdl.mywhatsappclone.model.StoryItem
-import com.abdl.mywhatsappclone.network.ApiConfig
-import com.abdl.mywhatsappclone.repository.MainRepository
+import com.abdl.mywhatsappclone.utils.Resource
 import com.abdl.mywhatsappclone.viewmodel.MainViewModel
-import com.abdl.mywhatsappclone.viewmodel.ViewModelFactory
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class StatusFragment : Fragment() {
-    private lateinit var viewModel: MainViewModel
+    private val viewModel: MainViewModel by viewModels()
     private var _binding: FragmentStatusBinding? = null
     private val binding get() = _binding!!
     private val adapterStatus = ListStatusAdapter()
@@ -33,28 +34,18 @@ class StatusFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val mainRepository = MainRepository(ApiConfig.getApiService())
 
-        viewModel =
-            ViewModelProvider(this, ViewModelFactory(mainRepository)).get(MainViewModel::class.java)
+        viewModel.status.observe(viewLifecycleOwner) { result ->
+            result.data?.let { setStatus(it) }
 
-        viewModel.statusList.observe(viewLifecycleOwner) {
-            setStatus(it)
-        }
-
-        viewModel.errorMessage.observe(viewLifecycleOwner) {
-            Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
-        }
-
-        viewModel.loading.observe(viewLifecycleOwner) {
-            if (it) {
-                binding.progressBar.visibility = View.VISIBLE
-            } else {
-                binding.progressBar.visibility = View.GONE
+            binding.progressBar.isVisible =
+                result is Resource.Loading<*> && result.data.isNullOrEmpty()
+            val error = result.error?.localizedMessage
+            if (result is Resource.Error<*> && result.data.isNullOrEmpty()) {
+                Toast.makeText(context, error, Toast.LENGTH_SHORT).show()
             }
         }
 
-        viewModel.getAllStatus()
     }
 
     private fun setStatus(mList: List<StoryItem>) {

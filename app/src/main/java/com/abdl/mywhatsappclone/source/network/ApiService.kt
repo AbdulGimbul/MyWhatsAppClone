@@ -1,4 +1,4 @@
-package com.abdl.mywhatsappclone.network
+package com.abdl.mywhatsappclone.source.network
 
 import com.abdl.mywhatsappclone.model.CallResponse
 import com.abdl.mywhatsappclone.model.ChatResponse
